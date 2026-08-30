@@ -3,7 +3,7 @@
  * Do not edit manually.
  * Eigora API
  * Physics simulation backend for the Eigora platform.
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.2
  */
 import type { ValidationErrorLocItem } from './validationErrorLocItem';
 import type { ValidationErrorCtx } from './validationErrorCtx';

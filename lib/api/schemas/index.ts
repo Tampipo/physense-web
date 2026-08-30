@@ -3,10 +3,12 @@
  * Do not edit manually.
  * Eigora API
  * Physics simulation backend for the Eigora platform.
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.2
  */
 
 export * from './barrierParams';
+export * from './coexistenceRequest';
+export * from './coexistenceResponse';
 export * from './complexMatrixSchema';
 export * from './complexMatrixSchemaIm';
 export * from './complexVectorSchema';
@@ -18,7 +20,19 @@ export * from './discreteEvolutionResponseOverlap';
 export * from './doubleWellParams';
 export * from './eigenstatesRequest';
 export * from './eigenstatesResponse';
+export * from './ensembleSchema';
+export * from './ensembleType';
 export * from './finiteWellParams';
+export * from './gasRequest';
+export * from './gasRequestSeed';
+export * from './gasResponse';
+export * from './gasSweepPoint';
+export * from './gasSweepPointMaxwellBoltzmann';
+export * from './gasSweepPointSommerfeld';
+export * from './gasSweepRequest';
+export * from './gasSweepRequestSeed';
+export * from './gasSweepRequestVary';
+export * from './gasSweepResponse';
 export * from './grid2DSchema';
 export * from './grid3DSchema';
 export * from './gridSchema';
@@ -45,6 +59,15 @@ export * from './singleAtomStateResponse';
 export * from './singleAtomStateResponseNegative';
 export * from './singleAtomStateResponsePositive';
 export * from './stepParams';
+export * from './systemSchema';
+export * from './systemType';
+export * from './temperatureRange';
+export * from './thermodynamicsRequest';
+export * from './thermodynamicsResponse';
+export * from './thermodynamicsResponseMagnetisation';
+export * from './thermodynamicsResponseStates';
+export * from './thermodynamicsResponseSusceptibility';
+export * from './thermodynamicsResponseVolume';
 export * from './trajectoryRequest';
 export * from './trajectoryResponse';
 export * from './trajectoryResponseClassicalMomentum';
