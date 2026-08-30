@@ -1,0 +1,73 @@
+## Un gaz quantique par Monte-Carlo
+
+Fermions et bosons diffèrent sur un point : ce qu'un état a le droit de faire. Deux fermions ne peuvent occuper la même orbitale ; les bosons le préfèrent. Tout le reste — la mer de Fermi, le condensat de Bose, toute la différence entre un métal et un superfluide — en découle.
+
+Alors mettons cela dans le *déplacement*, et nulle part ailleurs. Échantillonnons par Metropolis un gaz de particules identiques dans une boîte cubique : on choisit une particule, on propose de la reloger dans une autre orbitale, et la statistique décide quels relogements existent. Puis on vérifie si Fermi–Dirac et Bose–Einstein ressortent.
+
+### Le déplacement, c'est la physique
+
+Pour les **fermions**, une orbitale cible déjà occupée n'est pas un déplacement légal. Il n'y a aucune règle d'acceptation à écrire : la proposition ne renvoie simplement rien, et l'échantillonneur recommence. L'exclusion de Pauli comme *liste de déplacements plus courte*.
+
+Pour les **bosons**, le déplacement est toujours légal, mais il n'est pas symétrique — et c'est la partie facile à rater. Metropolis suppose que proposer $x \to x'$ est aussi probable que proposer $x' \to x$. Ce n'est pas le cas ici : une cible qui contient déjà $n_t$ particules est plus attirante qu'une orbitale vide, proportionnellement à $n_t + 1$. Metropolis–Hastings corrige par un terme de biais,
+
+$$
+\log\frac{T(x' \to x)}{T(x \to x')} = \log\frac{n_t + 1}{n_s}
+$$
+
+où $n_s$ est l'occupation de l'orbitale quittée. Sans lui, l'échantillonneur converge silencieusement vers la mauvaise distribution — pas de plantage, juste une courbe qui rate. C'est le seul endroit de cette bibliothèque où ce biais est non nul, et il a été vérifié contre une distribution stationnaire calculable exactement avant d'être admis.
+
+Le spin fait le reste. Un spin $s$ donne $2s+1$ états par orbitale, et un spin demi-entier signifie des fermions tandis qu'un spin entier signifie des bosons — le théorème spin-statistique fait l'aiguillage, plutôt que de demander deux fois le même fait à l'appelant.
+
+<GasMonteCarlo
+  caption={
+    <>
+      <b>Une chaîne, en direct :</b> les occupations échantillonnées face à la
+      forme close que la simulation ne voit jamais. Regardez les barres
+      d'erreur se resserrer. <b>Balayage convergé :</b> neuf chaînes
+      indépendantes, menées à terme, face à Sommerfeld et Maxwell–Boltzmann.
+    </>
+  }
+/>
+
+### Deux vues, parce que ce sont deux questions
+
+La vue en flux fait tourner **une** chaîne et affiche une moyenne courante : la distribution se construit sous vos yeux et les barres d'erreur rétrécissent visiblement. Ce qu'elle ne peut pas donner, c'est un nombre convergé : à tout instant elle montre une chaîne inachevée.
+
+La vue balayée fait tourner **plusieurs** chaînes, chacune jusqu'à convergence, dans des processus parallèles, et ne trace que les points d'arrivée. Ce qu'elle ne peut pas montrer, c'est la convergence — chaque point arrive déjà stabilisé.
+
+Un POST convergé ne peut pas montrer la première et un flux ne peut pas se payer la seconde : les deux existent donc, plutôt qu'une seule prétendant servir les deux.
+
+### Ce que fait le potentiel chimique
+
+$\mu$ est fixé par l'exigence que les occupations totalisent le nombre de particules réellement présentes :
+
+$$
+N = \sum_k g_k\, \bar n(\varepsilon_k), \qquad \bar n(\varepsilon) = \frac{1}{e^{(\varepsilon - \mu)/T} \pm 1}
+$$
+
+C'est une équation monotone en $\mu$ avec exactement une racine, et la résoudre donne le $\mu$ *exact* tracé en trait plein. Le $\mu$ *ajusté* est ce que la simulation seule peut offrir : un ajustement par moindres carrés de cette même distribution sur les occupations échantillonnées. Afficher les deux côte à côte est précisément l'intérêt — l'un est la réponse, l'autre la mesure, et seul leur accord fait preuve.
+
+Deux limites encadrent le cas fermionique, et toutes deux figurent sur le balayage :
+
+$$
+\mu \approx T_F\left[1 - \frac{\pi^2}{12}\left(\frac{T}{T_F}\right)^2\right] \quad (T \ll T_F), \qquad
+\mu \approx T\log\!\left(\frac{n\lambda^3}{g}\right) \quad (T \gg T_F)
+$$
+
+La première est le développement de Sommerfeld : à basse température $\mu$ se tient à l'énergie de Fermi et décroît quadratiquement. La seconde est la limite classique, où $\mu$ devient *négatif* et croît logarithmiquement — le gaz a oublié qu'il était quantique. La transition se situe vers $T \sim T_F$, et le balayage la traverse.
+
+### Lire la vue en direct
+
+À **basse température** ($T \ll T_F$), les occupations fermioniques forment une marche : une par orbitale sous $\mu$, zéro au-dessus, arrondie sur une largeur $\sim T$. Presque tout déplacement proposé est bloqué, puisque presque toute cible est occupée : l'échantillonneur est lent et les barres d'erreur larges.
+
+À **haute température**, la marche se dilue en une queue exponentielle et fermions, bosons et particules classiques deviennent indiscernables — $\bar n \ll 1$ partout, donc deux particules veulent rarement la même orbitale et la statistique n'est jamais consultée.
+
+Passez aux **bosons** à basse température et l'orbitale la plus basse se met à récolter une part macroscopique des particules. L'axe des occupations n'a plus de plafond à $1$, ce qui est toute la différence visuelle entre les deux statistiques.
+
+### Les réserves honnêtes
+
+La boîte est finie, donc le spectre orbital est discret et $T_F$ est calculé sur exactement les orbitales présentes, non à partir d'une densité d'états continue.
+
+Les tirages ici sont délibérément courts — quelques milliers d'échantillons — pour que les barres d'erreur soient réelles et visibles plutôt que décoratives. Les échantillons consécutifs étant corrélés, l'incertitude vraie est un peu plus grande que celle tracée, qui suppose l'indépendance.
+
+Et il n'y a pas de transition de condensation au sens strict : la condensation de Bose–Einstein est un énoncé de limite thermodynamique, et cent particules dans une boîte vous montreront l'orbitale fondamentale se remplir progressivement plutôt qu'une transition nette à une température critique.

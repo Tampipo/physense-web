@@ -1,0 +1,102 @@
+## Ensembles
+
+La physique statistique pose une seule question : étant donnée la liste des énergies qu'un système peut avoir, que fait-il à la température $T$ ? La réponse tient dans un nombre,
+
+$$
+Z = \sum_i g_i\, e^{-E_i/T}
+$$
+
+et tout le reste — énergie, entropie, capacité thermique, aimantation — est une dérivée de $\log Z$. Pas une approximation de dérivée. Une dérivée.
+
+> **Unités.** On prend $k_B = 1$ partout : la température *est* une énergie et l'entropie un nombre pur. Un écart $\Delta$ et une température $\Delta$ sont la même grandeur.
+
+### Pourquoi une seule somme suffit
+
+$Z$ est une somme sur les états, pondérée par $e^{-E/T}$. Deux faits en font toute la thermodynamique d'équilibre.
+
+Le premier : le poids contient déjà l'énergie. Dérivons par rapport à $\beta = 1/T$, et la somme fait descendre un facteur $E$ :
+
+$$
+\langle E\rangle = -\frac{\partial \log Z}{\partial \beta}
+$$
+
+Dérivons une seconde fois et nous obtenons la *fluctuation* d'énergie, c'est-à-dire la capacité thermique :
+
+$$
+C = \frac{\partial \langle E\rangle}{\partial T} = \beta^2 \operatorname{Var}(E)
+$$
+
+Cette seconde identité mérite qu'on s'y arrête. La capacité thermique est une réponse — l'énergie absorbée quand on chauffe — et la variance est une fluctuation, l'ampleur des errances de l'énergie à température fixée. C'est le même nombre. Un système qui absorbe volontiers de la chaleur est un système dont l'énergie s'agite déjà.
+
+Le second fait : $-T\log Z$ est l'énergie libre $F$, et $S = (\langle E\rangle - F)/T$ referme la boucle. Trois grandeurs, une somme.
+
+<EnsembleExplorer
+  caption={
+    <>
+      Tout ce qui est tracé vient d'un seul appel : un spectre entre,{" "}
+      <Tex>{`\\log Z`}</Tex> dérivé sort. Faites glisser <Tex>{`N`}</Tex> et
+      regardez : rien ne bouge — les courbes sont par copie, et l'extensivité
+      dit précisément que les grandeurs par copie ne dépendent pas du nombre de
+      copies.
+    </>
+  }
+/>
+
+### L'anomalie de Schottky
+
+Commençons par le système à deux niveaux, le plus petit spectre non trivial : un état à $0$, un à $\Delta$. Sa capacité thermique vaut
+
+$$
+\frac{C}{N} = \left(\frac{\Delta}{T}\right)^2 \frac{e^{\Delta/T}}{\left(e^{\Delta/T}+1\right)^2}
+$$
+
+nulle aux deux extrémités, avec un maximum entre les deux — à $T \approx 0{,}417\,\Delta$, de hauteur $0{,}4392$. La figure affiche les deux ; ils doivent coïncider à trois décimales quel que soit le $\Delta$ choisi, puisque $\Delta$ ne fixe que l'échelle de l'axe horizontal.
+
+Cette bosse porte un nom — l'anomalie de Schottky — et une raison. À $T \ll \Delta$, rien ne peut atteindre le niveau supérieur : chauffer ne fait rien, et le système n'absorbe pas de chaleur. À $T \gg \Delta$, les deux niveaux sont déjà également peuplés : chauffer ne fait *toujours* rien. C'est seulement quand $T$ est comparable à $\Delta$ qu'une petite variation de température déplace de la population, et c'est là que la chaleur est absorbée. **Un spectre fini a une capacité finie à stocker de l'énergie, donc un système borné doit présenter un maximum.**
+
+Comparez au mode harmonique, dont l'échelle ne s'arrête jamais : sa capacité thermique monte à $1$ et y reste. Il y a toujours un barreau de plus.
+
+### Entropie et troisième principe
+
+Faites $T \to 0$ sur n'importe lequel de ces systèmes et l'entropie tend vers $\log g_0$ — le logarithme de la dégénérescence du fondamental, et rien d'autre. Pour un système à deux niveaux, $\log 1 = 0$. Pour un spin $j$ sans champ, le fondamental est $(2j+1)$ fois dégénéré, et l'entropie par copie sature plutôt à $\log(2j+1)$ à haute température.
+
+C'est le troisième principe, et il sort de la somme sans y avoir été mis : à température assez basse, seuls les fondamentaux ont du poids, donc $Z \to g_0 e^{-E_0/T}$ et $S \to \log g_0$.
+
+### Libérer une variable
+
+Tout ce qui précède garde le système fixe et ne laisse circuler que l'énergie. Mais la température n'a rien de particulier. Toute grandeur extensive qu'un micro-état sait rapporter — aimantation, nombre de particules, volume — peut être libérée en l'échangeant contre son champ conjugué :
+
+$$
+\log w(x) = -\beta\left[E(x) - \sum_i f_i X_i(x)\right]
+$$
+
+Passez l'explorateur sur un spin et activez l'ensemble magnétique. Maintenant $M$ fluctue, et la dérivation qui donnait $C$ à partir de $E$ donne la susceptibilité à partir de $M$ :
+
+$$
+\chi = \frac{\partial \langle M\rangle}{\partial h} = \beta \operatorname{Var}(M)
+$$
+
+Même identité, autre variable. Et comme une variance n'est jamais négative, $\langle M \rangle$ croît nécessairement avec $h$ — ce n'est pas une hypothèse de modélisation mais un théorème sur tout système de cette forme.
+
+Essayez la même chose sur un système à deux niveaux et l'API refuse :
+
+```
+Magnetic frees ['magnetisation'], but TwoLevel carries nothing;
+a system can only be put in an ensemble that frees variables its
+microstates report
+```
+
+Ce refus est voulu. Un système à deux niveaux a des énergies et rien d'autre — ses micro-états n'ont pas d'aimantation à moyenner — donc en demander une renverrait un nombre dépourvu de sens. La vérification a lieu là où le système rencontre l'ensemble, et c'est pourquoi le contrôle magnétique ci-dessus reste désactivé tant qu'un spin n'est pas sélectionné.
+
+### Ce qui change quand on libère
+
+Ajouter un champ est une transformée de Legendre, et le potentiel issu de $-T\log Z$ change de nom avec elle :
+
+| Variables libres | Fonction de partition | $-T\log Z$ est |
+|---|---|---|
+| énergie | $Z = \sum e^{-\beta E}$ | Helmholtz $F$ |
+| énergie, $N$ | $\Xi = \sum e^{-\beta(E-\mu N)}$ | grand potentiel $\Omega$ |
+| énergie, $V$ | $\Delta = \sum e^{-\beta(E+PV)}$ | Gibbs $G$ |
+| énergie, $M$ | $Z = \sum e^{-\beta(E-hM)}$ | énergie libre magnétique |
+
+Ce sont tous des flottants, et annoncer l'un pour l'autre est une erreur qu'aucun test n'attraperait — d'où le fait que la figure lise son étiquette dans la réponse au lieu de la supposer.

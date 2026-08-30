@@ -6,6 +6,7 @@
   "nav": {
     "home": "Home",
     "qm": "Quantum mechanics",
+    "statphys": "Statistical physics",
     "about": "About",
     "search": "Search",
     "showMore": "Show more"
@@ -21,8 +22,10 @@
     "heading": "The Schrödinger equation, made visible.",
     "intro": "A pedagogical platform for physics, blending clearly written course notes with simulations you can tune and watch evolve in real time.",
     "exploreQm": "Explore quantum mechanics",
+    "exploreStatphys": "Explore statistical physics",
     "ctaSecondary": "Start with the harmonic oscillator",
     "modulesKicker": "Modules",
+    "modulesKickerStatphys": "Statistical physics",
     "steps": {
       "read": {
         "title": "Read the theory",
@@ -100,6 +103,41 @@
         "title": "Spin measurement",
         "summary": "Successive measurements, collapse, and the Bloch sphere.",
         "tags": "measurement, superposition, probability, geometry"
+      }
+    }
+  },
+  "statphys": {
+    "index": {
+      "heading": "Statistical physics",
+      "intro": "Partition functions summed exactly where that is possible, and sampled where it is not.",
+      "readingOrder": "The modules are numbered in a suggested reading order — the first two sum the states exactly, the last two sample them. Select tags to narrow the list.",
+      "searchPlaceholder": "Search modules…",
+      "filterLabel": "Filter by tag",
+      "clearFilters": "Clear",
+      "shownLabel": "Modules shown",
+      "noResults": "No module matches — try another word or clear the filters.",
+      "matchIn": "Found in the content"
+    },
+    "modules": {
+      "ensembles": {
+        "title": "Ensembles",
+        "summary": "One partition function, summed exactly, and every thermodynamic quantity that follows from it.",
+        "tags": "partition function, entropy, heat capacity, magnetism"
+      },
+      "coexistence": {
+        "title": "Two phases in equilibrium",
+        "summary": "An Einstein crystal against an ideal gas: equal chemical potentials give argon's sublimation curve.",
+        "tags": "phase transition, chemical potential, ideal gas, Clausius-Clapeyron"
+      },
+      "ising": {
+        "title": "The Ising model",
+        "summary": "Sampling a lattice with no closed form in two dimensions, and watching it order at a temperature we know exactly.",
+        "tags": "Monte Carlo, phase transition, magnetism, critical point"
+      },
+      "monte-carlo": {
+        "title": "A quantum gas by Monte Carlo",
+        "summary": "Fermi-Dirac and Bose-Einstein statistics recovered from one move and an acceptance rule.",
+        "tags": "Monte Carlo, fermions, bosons, chemical potential"
       }
     }
   },

@@ -11,6 +11,10 @@ import { FiniteWellStates } from "@/components/simulations/FiniteWellStates";
 import { InfiniteLeftWellStates } from "@/components/simulations/InfiniteLeftWellStates";
 import { OrbitalViewer } from "@/components/simulations/OrbitalViewer";
 import { DegeneracyLattice } from "@/components/simulations/DegeneracyLattice";
+import { EnsembleExplorer } from "@/components/simulations/EnsembleExplorer";
+import { PhaseCoexistence } from "@/components/simulations/PhaseCoexistence";
+import { IsingLattice } from "@/components/simulations/IsingLattice";
+import { GasMonteCarlo } from "@/components/simulations/GasMonteCarlo";
 import { OperatorMeasurement } from "@/components/simulations/OperatorMeasurement";
 import { PositionBins } from "@/components/simulations/PositionBins";
 import { SeparableStateViewer } from "@/components/simulations/SeparableStateViewer";
@@ -32,6 +36,10 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     InfiniteLeftWellStates,
     OrbitalViewer,
     DegeneracyLattice,
+    EnsembleExplorer,
+    PhaseCoexistence,
+    IsingLattice,
+    GasMonteCarlo,
     OperatorMeasurement,
     PositionBins,
     SeparableStateViewer,

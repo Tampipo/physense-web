@@ -19,21 +19,26 @@ function languageAlternates(path: string): Record<string, string> {
 }
 
 /**
- * Metadata for one QM module page.
+ * Metadata for one course module page.
  *
- * Title and description come from `qm.modules.<slug>` in the message files,
- * which already carry `title` and `summary` in both locales — so the tab, the
- * search result and the link preview all stay in step with the sidebar label,
- * and translations need no separate authoring.
+ * Title and description come from `<domain>.modules.<slug>` in the message
+ * files, which already carry `title` and `summary` in both locales — so the
+ * tab, the search result and the link preview all stay in step with the
+ * sidebar label, and translations need no separate authoring.
+ *
+ * `domain` is both the message namespace and the URL segment, which is what
+ * lets one helper serve every subject: the two have to agree anyway, so
+ * deriving them from a single argument makes disagreeing impossible.
  */
 export async function moduleMetadata(
   locale: string,
   slug: string,
+  domain: string = "qm",
 ): Promise<Metadata> {
-  const t = await getTranslations({ locale, namespace: "qm.modules" });
+  const t = await getTranslations({ locale, namespace: `${domain}.modules` });
   const title = t(`${slug}.title`);
   const description = t(`${slug}.summary`);
-  const path = `/qm/${slug}`;
+  const path = `/${domain}/${slug}`;
 
   return {
     title,

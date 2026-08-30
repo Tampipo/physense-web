@@ -6,6 +6,7 @@
   "nav": {
     "home": "Accueil",
     "qm": "Mécanique quantique",
+    "statphys": "Physique statistique",
     "about": "À propos",
     "search": "Rechercher",
     "showMore": "Voir plus"
@@ -21,8 +22,10 @@
     "heading": "L'équation de Schrödinger, rendue visible.",
     "intro": "Une plateforme pédagogique de physique mêlant des cours clairement rédigés à des simulations que l'on peut régler et regarder évoluer en temps réel.",
     "exploreQm": "Explorer la mécanique quantique",
+    "exploreStatphys": "Explorer la physique statistique",
     "ctaSecondary": "Commencer par l'oscillateur harmonique",
     "modulesKicker": "Modules",
+    "modulesKickerStatphys": "Physique statistique",
     "steps": {
       "read": {
         "title": "Lire la théorie",
@@ -100,6 +103,41 @@
         "title": "Mesure du spin",
         "summary": "Mesures successives, réduction, et la sphère de Bloch.",
         "tags": "mesure, superposition, probabilité, géométrie"
+      }
+    }
+  },
+  "statphys": {
+    "index": {
+      "heading": "Physique statistique",
+      "intro": "Des fonctions de partition sommées exactement quand c'est possible, échantillonnées quand ça ne l'est pas.",
+      "readingOrder": "Les modules sont numérotés dans un ordre de lecture conseillé — les deux premiers somment les états exactement, les deux derniers les échantillonnent. Sélectionnez des tags pour filtrer la liste.",
+      "searchPlaceholder": "Rechercher un module…",
+      "filterLabel": "Filtrer par tag",
+      "clearFilters": "Réinitialiser",
+      "shownLabel": "Modules affichés",
+      "noResults": "Aucun module ne correspond — essayez un autre mot ou réinitialisez les filtres.",
+      "matchIn": "Trouvé dans le contenu"
+    },
+    "modules": {
+      "ensembles": {
+        "title": "Ensembles",
+        "summary": "Une fonction de partition, sommée exactement, et toutes les grandeurs thermodynamiques qui en découlent.",
+        "tags": "fonction de partition, entropie, capacité thermique, magnétisme"
+      },
+      "coexistence": {
+        "title": "Deux phases à l'équilibre",
+        "summary": "Un cristal d'Einstein face à un gaz parfait : l'égalité des potentiels chimiques donne la courbe de sublimation de l'argon.",
+        "tags": "transition de phase, potentiel chimique, gaz parfait, Clausius-Clapeyron"
+      },
+      "ising": {
+        "title": "Le modèle d'Ising",
+        "summary": "Échantillonner un réseau sans solution analytique en deux dimensions, et le voir s'ordonner à une température connue exactement.",
+        "tags": "Monte-Carlo, transition de phase, magnétisme, point critique"
+      },
+      "monte-carlo": {
+        "title": "Un gaz quantique par Monte-Carlo",
+        "summary": "Les statistiques de Fermi-Dirac et de Bose-Einstein retrouvées à partir d'un seul déplacement et d'une règle d'acceptation.",
+        "tags": "Monte-Carlo, fermions, bosons, potentiel chimique"
       }
     }
   },

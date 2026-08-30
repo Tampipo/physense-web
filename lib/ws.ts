@@ -5,7 +5,11 @@ import type { GridSchema, PotentialSchema } from "./api/schemas";
 
 const DEFAULT_WS_URL = "wss://api.eigora.tampipo.fr";
 
-function getWsBaseUrl(): string {
+// Exported because every streaming endpoint resolves its host the same way,
+// and a second copy of this would be a second place for the env var to be
+// read wrong. See lib/statphys-ws.ts.
+
+export function getWsBaseUrl(): string {
   const fromEnv = process.env.NEXT_PUBLIC_WS_URL;
   return (fromEnv && fromEnv.length > 0 ? fromEnv : DEFAULT_WS_URL).replace(
     /\/+$/,

@@ -1,0 +1,62 @@
+## The Ising Model
+
+Put a spin on every site of a square lattice, let each one be $+1$ or $-1$, and have neighbours prefer to agree:
+
+$$
+E = -J \sum_{\langle ij \rangle} s_i s_j
+$$
+
+That is the whole model. It has no closed form for the magnetisation of a finite lattice, and its partition function is a sum over $2^{L^2}$ configurations — for the $48 \times 48$ lattice below, $2^{2304}$ terms, which is not a large number so much as a number with no physical meaning. Summing is over. From here on, we sample.
+
+### Why sampling is legitimate
+
+Metropolis–Hastings does not compute $Z$ and does not need to. It builds a random walk through configuration space whose *stationary distribution* is the Boltzmann one, by proposing a move and accepting it with probability
+
+$$
+\min\left(1, e^{-\Delta E / T}\right)
+$$
+
+Every quantity in the previous modules was an exact sum weighted by $e^{-E/T}$; every quantity here is an average over configurations that *appear* with frequency $e^{-E/T}$. Same weight, moved from the arithmetic into the sampling.
+
+The catch is that consecutive configurations differ by one spin, so they are correlated, and an average over $n$ samples is worth fewer than $n$ independent ones. That is why the traces below take time to settle, and why the first thing to watch is whether they settle at all.
+
+<IsingLattice
+  caption={
+    <>
+      Blue is <Tex>{`+1`}</Tex>, orange is <Tex>{`-1`}</Tex>. Set{" "}
+      <Tex>{`T`}</Tex> well below <Tex>{`T_c`}</Tex> and one colour takes the
+      lattice; well above and neither can hold ground. At{" "}
+      <Tex>{`T_c`}</Tex> itself, look for domains of every size at once.
+    </>
+  }
+/>
+
+### The one number we know exactly
+
+Onsager solved the infinite square lattice in 1944, and the temperature at which it orders is
+
+$$
+T_c = \frac{2J}{\ln\left(1 + \sqrt{2}\right)} \approx 2.269185\, J
+$$
+
+This is what makes the Ising model worth sampling rather than merely convenient. **The sampler has something to be right about.** Push the temperature below $2.269$ and $|m|$ should climb away from zero; push it above and $|m|$ should collapse toward it. Neither behaviour was put into the code — the sampler only ever sees $\Delta E$ for a single flip.
+
+Three regimes, and the readout names which one you are in:
+
+- **$T \ll T_c$** — one domain wins. The energy per site heads for $-2J$, every bond satisfied. Flipping a spin inside a domain costs $8J$, so almost nothing is accepted and the acceptance rate falls through the floor.
+- **$T \gg T_c$** — thermal noise beats the coupling. $|m| \to 0$, the energy per site $\to 0$, and almost every proposal is accepted because $\Delta E$ barely matters.
+- **$T \approx T_c$** — domains on every scale, from single sites to the whole lattice, and they never stop reorganising.
+
+### Finite lattices lie, slightly
+
+Onsager's $T_c$ is the infinite-lattice answer, and $48 \times 48$ is not infinite. Two consequences worth expecting rather than being surprised by:
+
+The transition is **smeared**. A true phase transition needs the thermodynamic limit; on a finite lattice every quantity is an analytic function of $T$, so $|m|$ does not vanish sharply at $T_c$ but decays over a window whose width shrinks as $L$ grows. Try $L = 16$ against $L = 128$ and watch the crossover sharpen.
+
+Below $T_c$, $|m|$ is plotted rather than $m$ because on a finite lattice the whole system can and eventually will flip. Given long enough, $\langle m \rangle = 0$ at *every* temperature by symmetry — the two ground states are mirror images and nothing prefers either. What "ordered" really means is that the flipping time grows exponentially with $L$, so the lattice is stuck in one of them for any run you will watch.
+
+And near $T_c$ the sampler slows down. Correlated regions grow to the size of the lattice, single-spin flips take forever to rearrange them, and the error bars on anything measured there are much worse than the sample count suggests. This is critical slowing down, and it is the reason cluster algorithms exist.
+
+### What carried over
+
+The acceptance rule here is the same expression the exact modules used as a weight, and the ensemble object is literally the same one: a temperature, plus a list of which extensive variables are free. Adding a magnetic field to this lattice would not require a new sampler, only a field in the ensemble — the acceptance already knows how to read one.

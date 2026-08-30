@@ -1,0 +1,101 @@
+## Ensembles
+
+Statistical physics asks one question: given a list of energies a system can have, what does it do at temperature $T$? The answer is a single number,
+
+$$
+Z = \sum_i g_i\, e^{-E_i/T}
+$$
+
+and everything else — energy, entropy, heat capacity, magnetisation — is a derivative of $\log Z$. Not an approximation of one. A derivative.
+
+> **Units.** $k_B = 1$ throughout, so temperature *is* an energy and entropy is a pure number. A gap of $\Delta$ and a temperature of $\Delta$ are the same quantity.
+
+### Why one sum is enough
+
+$Z$ is a sum over states, weighted by $e^{-E/T}$. Two facts make it the whole of equilibrium thermodynamics.
+
+The first is that the weight already contains the energy. Differentiate with respect to $\beta = 1/T$ and the sum brings down a factor of $E$:
+
+$$
+\langle E\rangle = -\frac{\partial \log Z}{\partial \beta}
+$$
+
+Differentiate again and you get the *fluctuation* in energy, which is the heat capacity:
+
+$$
+C = \frac{\partial \langle E\rangle}{\partial T} = \beta^2 \operatorname{Var}(E)
+$$
+
+That second identity is worth pausing on. Heat capacity is a response — how much energy the system absorbs when you warm it — and variance is a fluctuation, how much its energy wanders at fixed temperature. They are the same number. A system that absorbs heat readily is one whose energy is already restless.
+
+The second fact is that $-T\log Z$ is the free energy $F$, and $S = (\langle E\rangle - F)/T$ closes the loop. Three quantities, one sum.
+
+<EnsembleExplorer
+  caption={
+    <>
+      Everything drawn comes from one call: a spectrum in, <Tex>{`\\log Z`}</Tex>{" "}
+      differentiated out. Drag <Tex>{`N`}</Tex> and watch nothing move — the
+      curves are per copy, and per-copy quantities are what extensivity says are
+      independent of how many copies there are.
+    </>
+  }
+/>
+
+### The Schottky anomaly
+
+Start with the two-level system, the smallest spectrum that is not trivial: one state at $0$, one at $\Delta$. Its heat capacity is
+
+$$
+\frac{C}{N} = \left(\frac{\Delta}{T}\right)^2 \frac{e^{\Delta/T}}{\left(e^{\Delta/T}+1\right)^2}
+$$
+
+which is zero at both ends and has a peak in between — at $T \approx 0.417\,\Delta$, with height $0.4392$. The figure reports both; they should match to three digits whatever $\Delta$ you choose, because $\Delta$ only sets the scale of the horizontal axis.
+
+The bump has a name — the Schottky anomaly — and a reason. At $T \ll \Delta$ nothing can reach the upper level, so warming the system does nothing and it absorbs no heat. At $T \gg \Delta$ both levels are equally occupied already, so warming it *still* does nothing. Only when $T$ is comparable to $\Delta$ does a small change in temperature move population, and that is where heat gets absorbed. **A finite spectrum has a finite capacity to store energy, and a bounded system must therefore have a peak.**
+
+Compare the harmonic mode, whose ladder never ends: its heat capacity climbs to $1$ and stays there. There is always another rung.
+
+### Entropy and the third law
+
+Set $T \to 0$ in any of these and the entropy goes to $\log g_0$ — the logarithm of the ground-state degeneracy, and nothing else. For a two-level system that is $\log 1 = 0$. For a spin $j$ in no field the ground state is $(2j+1)$-fold degenerate, and the entropy per copy saturates at $\log(2j+1)$ at high temperature instead.
+
+This is the third law, and it falls out of the sum without being put in: at low enough temperature only the ground states have any weight, so $Z \to g_0 e^{-E_0/T}$ and $S \to \log g_0$.
+
+### Freeing a variable
+
+Everything above holds the system fixed and lets only energy flow. But temperature is not special. Any extensive quantity a microstate reports — magnetisation, particle number, volume — can be set free by trading it against its conjugate field:
+
+$$
+\log w(x) = -\beta\left[E(x) - \sum_i f_i X_i(x)\right]
+$$
+
+Switch the explorer to a spin and turn on the magnetic ensemble. Now $M$ fluctuates, and the same differentiation that gave $C$ from $E$ gives the susceptibility from $M$:
+
+$$
+\chi = \frac{\partial \langle M\rangle}{\partial h} = \beta \operatorname{Var}(M)
+$$
+
+Same identity, different variable. And since a variance is never negative, $\langle M \rangle$ is guaranteed to increase with $h$ — which is not a modelling assumption but a theorem about any system of this form.
+
+Try the same with a two-level system and the API refuses:
+
+```
+Magnetic frees ['magnetisation'], but TwoLevel carries nothing;
+a system can only be put in an ensemble that frees variables its
+microstates report
+```
+
+That refusal is the design. A two-level system has energies and nothing else — its microstates have no magnetisation to average — so asking for one would return a number that means nothing. The check happens where the system meets the ensemble, and it is why the magnetic control above is disabled unless a spin is selected.
+
+### What changes when you free something
+
+Adding a field is a Legendre transform, and the potential you get from $-T\log Z$ changes name with it:
+
+| Free variables | Partition function | $-T\log Z$ is |
+|---|---|---|
+| energy | $Z = \sum e^{-\beta E}$ | Helmholtz $F$ |
+| energy, $N$ | $\Xi = \sum e^{-\beta(E-\mu N)}$ | grand potential $\Omega$ |
+| energy, $V$ | $\Delta = \sum e^{-\beta(E+PV)}$ | Gibbs $G$ |
+| energy, $M$ | $Z = \sum e^{-\beta(E-hM)}$ | magnetic free energy |
+
+They are all floats, and reporting one as another is an error no test would catch — which is why the figure reads its label off the response rather than assuming it.

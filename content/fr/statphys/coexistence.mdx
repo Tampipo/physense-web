@@ -1,0 +1,72 @@
+## Deux phases à l'équilibre
+
+Un solide et sa vapeur dans le même récipient forment deux systèmes, pas un. Ils échangent des atomes, et cessent de le faire quand aucun n'y gagne — quand leurs potentiels chimiques sont égaux :
+
+$$
+\mu_{\text{solide}}(T) = \mu_{\text{gaz}}(T, P)
+$$
+
+Le potentiel du gaz dépend de la pression, celui du solide presque pas. À chaque température, cette équation a donc une solution en $P$, et la tracer donne une **courbe de coexistence**. Pour l'argon sous son point triple à $83{,}8\ \text{K}$, cette courbe est la pression de sublimation — la pression à laquelle l'argon solide est en équilibre avec sa vapeur, et qu'on peut lire dans une table.
+
+### Deux modèles, délibérément grossiers
+
+Le **solide** est un cristal d'Einstein : chaque atome dans son propre puits harmonique, trois modes chacun, tous à la même fréquence $\omega$, l'ensemble lié par une énergie de cohésion $\varepsilon_c$ par atome. L'énergie libre par atome vaut
+
+$$
+f_{\text{solide}} = -\varepsilon_c + 3T\log\!\left(2\sinh\frac{\hbar\omega}{2T}\right)
+$$
+
+et comme le cristal a un nombre de sites fixé, $\mu_{\text{solide}} = f_{\text{solide}}$ directement.
+
+Le **gaz** est parfait — sans interactions, de simples particules dans une boîte :
+
+$$
+\mu_{\text{gaz}} = T\log\!\left(\frac{P\lambda^3}{T}\right), \qquad \lambda = \frac{h}{\sqrt{2\pi m T}}
+$$
+
+Aucun des deux modèles ne décrit correctement sa phase. Le cristal d'Einstein se trompe sur la capacité thermique à basse température (il faudrait les modes acoustiques de Debye), et une vapeur réelle n'est pas parfaite. Ce qui survit à cette grossièreté, c'est l'*exponentielle*, et c'est l'essentiel de la courbe.
+
+<PhaseCoexistence
+  caption={
+    <>
+      À gauche, la pression de sublimation sur cinq ordres de grandeur. À
+      droite, les mêmes données en <Tex>{`\\ln P`}</Tex> contre{" "}
+      <Tex>{`1/T`}</Tex> — presque une droite, dont la pente est la chaleur
+      latente.
+    </>
+  }
+/>
+
+### Pourquoi le tracé logarithmique est droit
+
+En résolvant l'égalité pour $P$, la dépendance en température se sépare en une exponentielle et un préfacteur :
+
+$$
+P(T) = \frac{T}{\lambda^3}\exp\!\left(\frac{f_{\text{solide}}}{T}\right)
+\ \sim\ T^{5/2}\, e^{-L/T}, \qquad L = \varepsilon_c - \frac{3\hbar\omega}{2}
+$$
+
+Le logarithme transforme l'exponentielle en droite de pente $-L$ en $1/T$, tandis que le préfacteur n'apporte que $\tfrac{5}{2}\log T$ — une correction lentement variable qui courbe très légèrement la droite. Sur la fenêtre tracée, cette courbure vaut quelques pour cent.
+
+C'est exactement ce que rapporte la figure : le $L = \varepsilon_c - 3\hbar\omega/2$ **exact** du modèle, et la **pente ajustée** mesurée sur la courbe comme le ferait un expérimentateur. Ils diffèrent, et la différence est le préfacteur. Un ajustement linéaire sur des données réelles de sublimation mesure $L$ avec le même petit biais, pour la même raison.
+
+Remarquez où est passée l'énergie de point zéro. L'énergie de cohésion $\varepsilon_c$ est ce qu'il en coûte d'extraire un atome du cristal *si le cristal était immobile* — or il ne l'est pas : chaque atome dispose déjà de $\tfrac{3}{2}\hbar\omega$ de mouvement de point zéro qui l'aide à s'échapper. La chaleur latente est la différence, et la mécanique quantique a réduit la liaison du solide avant qu'aucun atome n'ait bougé.
+
+### Lire les nombres
+
+Avec les valeurs de l'argon — $\hbar\omega/k_B = 90\ \text{K}$, $\varepsilon_c/k_B = 1066\ \text{K}$, $m = 39{,}95\ \text{u}$ — le modèle donne $L = 931\ \text{K}$, soit $7{,}74\ \text{kJ/mol}$, contre une enthalpie de sublimation mesurée d'environ $7{,}7\ \text{kJ/mol}$.
+
+Deux réglages à essayer :
+
+- **La masse** déplace la courbe verticalement sans l'incliner. $m$ n'intervient que par la longueur d'onde thermique $\lambda \propto m^{-1/2}$, qui est dans le préfacteur, jamais dans l'exposant. Un atome plus lourd à liaison égale sublime à plus basse pression, mais avec la même chaleur latente.
+- **$\hbar\omega$** l'incline. Augmenter la température d'Einstein rigidifie le cristal, creuse l'énergie de point zéro et *abaisse* $L$ — à cohésion fixée, un solide plus rigide sublime plus facilement, parce que ses atomes partent avec plus d'énergie.
+
+### De quoi ceci est un cas particulier
+
+La relation entre la pente et la chaleur latente est celle de Clausius–Clapeyron,
+
+$$
+\frac{d\log P}{d(1/T)} = -\frac{L}{k_B}
+$$
+
+qu'on démontre d'ordinaire thermodynamiquement, par l'égalité des enthalpies libres de part et d'autre d'une frontière de phase, sans aucun modèle des phases. Ici elle arrive par l'autre bout : deux fonctions de partition, une condition, et la relation thermodynamique apparaît dans la réponse. Cet accord est la vérification — une loi générale retrouvée par un modèle microscopique précis à qui on ne l'avait jamais apprise.

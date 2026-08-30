@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { QM_MODULES } from "@/lib/qm-modules";
+import { STATPHYS_MODULES } from "@/lib/statphys-modules";
 
 const STEPS = [
   { key: "read", Icon: BookOpen },
@@ -23,6 +24,7 @@ export default async function HomePage({
   setRequestLocale(locale);
   const t = await getTranslations("home");
   const qm = await getTranslations("qm.modules");
+  const statphys = await getTranslations("statphys.modules");
 
   return (
     <div className="space-y-24">
@@ -88,6 +90,9 @@ export default async function HomePage({
       </section>
 
       {/* ── Modules ──────────────────────────────────────────────────── */}
+      {/* One section per subject. The heading carries the subject name now
+          that there is more than one, so a reader landing here can tell which
+          catalogue they are looking at without following the link. */}
       <section className="space-y-6">
         <div className="flex items-baseline justify-between">
           <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
@@ -108,6 +113,31 @@ export default async function HomePage({
               index={i + 1}
               title={qm(`${slug}.title`)}
               summary={qm(`${slug}.summary`)}
+            />
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-6">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
+            {t("modulesKickerStatphys")}
+          </h2>
+          <Link
+            href="/statphys"
+            className="text-sm text-muted transition-colors hover:text-accent"
+          >
+            {t("exploreStatphys")} →
+          </Link>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {STATPHYS_MODULES.map((slug, i) => (
+            <ModuleCard
+              key={slug}
+              href={`/statphys/${slug}`}
+              index={i + 1}
+              title={statphys(`${slug}.title`)}
+              summary={statphys(`${slug}.summary`)}
             />
           ))}
         </div>

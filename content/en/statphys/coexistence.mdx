@@ -1,0 +1,71 @@
+## Two Phases in Equilibrium
+
+A solid and its vapour sitting in the same container are two systems, not one. They exchange atoms, and they stop exchanging when neither gains by it — when their chemical potentials are equal:
+
+$$
+\mu_{\text{solid}}(T) = \mu_{\text{gas}}(T, P)
+$$
+
+The gas potential depends on pressure, the solid's barely does. So at each temperature that equation has one solution for $P$, and tracing it out gives a **coexistence curve**. For argon below its triple point at $83.8\ \text{K}$, that curve is the sublimation pressure — the pressure at which solid argon is in equilibrium with argon vapour, and it can be looked up in a table.
+
+### Two models, deliberately crude
+
+The **solid** is an Einstein crystal: every atom sits in its own harmonic well, three modes each, all at the same frequency $\omega$, and the whole thing is bound by a cohesion energy $\varepsilon_c$ per atom. The free energy per atom is
+
+$$
+f_{\text{solid}} = -\varepsilon_c + 3T\log\!\left(2\sinh\frac{\hbar\omega}{2T}\right)
+$$
+
+and since the crystal has a fixed number of sites, $\mu_{\text{solid}} = f_{\text{solid}}$ directly.
+
+The **gas** is ideal — no interactions, just particles in a box:
+
+$$
+\mu_{\text{gas}} = T\log\!\left(\frac{P\lambda^3}{T}\right), \qquad \lambda = \frac{h}{\sqrt{2\pi m T}}
+$$
+
+Neither model is a good description of its phase. The Einstein crystal gets the low-temperature heat capacity wrong (it needs Debye's acoustic modes), and a real vapour is not ideal. What survives the crudeness is the *exponential*, and that is what the curve is mostly made of.
+
+<PhaseCoexistence
+  caption={
+    <>
+      Left, the sublimation pressure across five orders of magnitude. Right, the
+      same data as <Tex>{`\\ln P`}</Tex> against <Tex>{`1/T`}</Tex> — nearly a
+      straight line, and its slope is the latent heat.
+    </>
+  }
+/>
+
+### Why the log plot is straight
+
+Solve the equality for $P$ and the temperature dependence separates into an exponential and a prefactor:
+
+$$
+P(T) = \frac{T}{\lambda^3}\exp\!\left(\frac{f_{\text{solid}}}{T}\right)
+\ \sim\ T^{5/2}\, e^{-L/T}, \qquad L = \varepsilon_c - \frac{3\hbar\omega}{2}
+$$
+
+Take a logarithm and the exponential becomes a straight line in $1/T$ with slope $-L$, while the prefactor contributes only $\tfrac{5}{2}\log T$ — a slowly varying correction that bends the line very gently. Over the window plotted, that bend is a few percent.
+
+Which is exactly what the figure reports: the **exact** $L = \varepsilon_c - 3\hbar\omega/2$ from the model, and the **fitted slope** measured off the curve the way an experimentalist would. They differ, and the difference is the prefactor. A straight-line fit to real sublimation data measures $L$ with the same small bias, for the same reason.
+
+Note where the zero-point energy went. The cohesion energy $\varepsilon_c$ is what it costs to pull an atom out of the crystal *if the crystal were still*, but it is not — each atom has $\tfrac{3}{2}\hbar\omega$ of zero-point motion that is already helping it escape. The latent heat is the difference, and quantum mechanics has reduced the binding of the solid before any atom has moved.
+
+### Reading the numbers
+
+With argon's defaults — $\hbar\omega/k_B = 90\ \text{K}$, $\varepsilon_c/k_B = 1066\ \text{K}$, $m = 39.95\ \text{u}$ — the model gives $L = 931\ \text{K}$, which is $7.74\ \text{kJ/mol}$ against a measured sublimation enthalpy of about $7.7\ \text{kJ/mol}$.
+
+Two knobs to try:
+
+- **Mass** moves the curve up or down without tilting it. $m$ enters only through the thermal wavelength $\lambda \propto m^{-1/2}$, which sits in the prefactor, never in the exponent. A heavier atom of the same binding sublimes at lower pressure, but with the same latent heat.
+- **$\hbar\omega$** tilts it. Raising the Einstein temperature stiffens the crystal, deepens the zero-point energy, and *lowers* $L$ — a stiffer solid is easier to sublime, at fixed cohesion, because its atoms start with more energy.
+
+### What this is an instance of
+
+The relation between the slope and the latent heat is Clausius–Clapeyron,
+
+$$
+\frac{d\log P}{d(1/T)} = -\frac{L}{k_B}
+$$
+
+usually derived thermodynamically, from the equality of Gibbs energies across a phase boundary, with no model of either phase. Here it arrives from the other direction: two partition functions, one condition, and the thermodynamic relation appears in the answer. That agreement is the check — a general law reproduced by a specific microscopic model that was never told about it.

@@ -4,6 +4,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { QM_MODULES } from "@/lib/qm-modules";
+import { STATPHYS_MODULES } from "@/lib/statphys-modules";
 import { Wordmark } from "./Wordmark";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { SidebarNavItem } from "./SidebarNavItem";
@@ -14,6 +15,7 @@ export async function Sidebar() {
   const t = await getTranslations("nav");
   const site = await getTranslations("site");
   const qm = await getTranslations("qm.modules");
+  const statphys = await getTranslations("statphys.modules");
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-surface/40 px-5 py-6 backdrop-blur-sm lg:flex">
@@ -31,14 +33,23 @@ export async function Sidebar() {
           <SidebarNavItem href="/" label={t("home")} />
         </div>
 
-        {/* One group per subject — quantum mechanics today, more (e.g.
-            statistical physics) to follow below it, same mechanics. */}
+        {/* One group per subject, in the order they are meant to be read. */}
         <SidebarSubjectGroup
           heading={t("qm")}
           href="/qm"
           modules={QM_MODULES.map((slug) => ({
             slug,
             label: qm(`${slug}.title`),
+          }))}
+          showMoreLabel={t("showMore")}
+        />
+
+        <SidebarSubjectGroup
+          heading={t("statphys")}
+          href="/statphys"
+          modules={STATPHYS_MODULES.map((slug) => ({
+            slug,
+            label: statphys(`${slug}.title`),
           }))}
           showMoreLabel={t("showMore")}
         />

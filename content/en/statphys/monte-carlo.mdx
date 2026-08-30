@@ -1,0 +1,73 @@
+## A Quantum Gas by Monte Carlo
+
+Fermions and bosons differ in one respect: what a state is allowed to do. Two fermions may not occupy the same orbital; bosons prefer to. Everything else — the Fermi sea, the Bose condensate, the whole difference between a metal and a superfluid — follows from that.
+
+So put it in the *move*, and nowhere else. Sample a gas of identical particles in a cubic box with Metropolis, pick a particle, propose relocating it to another orbital, and let the statistics decide which relocations exist. Then check whether Fermi–Dirac and Bose–Einstein come back out.
+
+### The move is the physics
+
+For **fermions**, a target orbital that is already occupied is not a legal move. There is no acceptance rule to write: the proposal simply returns nothing, and the sampler tries again. Pauli exclusion as a *shorter list of moves*.
+
+For **bosons** the move is always legal, but it is not symmetric, and this is the part that is easy to get wrong. Metropolis assumes proposing $x \to x'$ is as likely as proposing $x' \to x$. It is not here: a target already holding $n_t$ particles is more attractive than an empty one, in proportion to $n_t + 1$. Metropolis–Hastings repairs this with a bias term,
+
+$$
+\log\frac{T(x' \to x)}{T(x \to x')} = \log\frac{n_t + 1}{n_s}
+$$
+
+where $n_s$ is the occupancy of the orbital being left. Omit it and the sampler quietly converges to the wrong distribution — not a crash, just a curve that misses. It is the one place in this library where that bias is non-zero, and it was checked against an exactly computable stationary distribution before being trusted.
+
+The spin does the rest. A spin $s$ gives $2s+1$ states per orbital, and half-integer spin means fermions while integer means bosons — the spin–statistics theorem doing the dispatch, rather than the caller being asked the same fact twice.
+
+<GasMonteCarlo
+  caption={
+    <>
+      <b>One chain, live:</b> the sampled occupations against the closed form
+      the simulation never sees. Watch the error bars close.{" "}
+      <b>Converged sweep:</b> nine independent chains, each run out, against
+      Sommerfeld and Maxwell–Boltzmann.
+    </>
+  }
+/>
+
+### Two views, because they answer different questions
+
+The streamed view runs **one** chain and reports a running average, so the distribution assembles itself in front of you and the error bars visibly shrink. What it cannot do is give a converged number: at any moment it is showing you a chain that has not finished.
+
+The swept view runs **many** chains, each to convergence, in parallel processes, and plots only the endpoints. What it cannot do is show you convergence — every point arrives already settled.
+
+A converged POST cannot show the first and a stream cannot afford the second, so both exist rather than one pretending to serve both.
+
+### What the chemical potential is doing
+
+$\mu$ is fixed by the requirement that the occupations add up to the particles you actually have:
+
+$$
+N = \sum_k g_k\, \bar n(\varepsilon_k), \qquad \bar n(\varepsilon) = \frac{1}{e^{(\varepsilon - \mu)/T} \pm 1}
+$$
+
+That is a monotone equation in $\mu$ with exactly one root, and solving it gives the *exact* $\mu$ drawn as a line. The *fitted* $\mu$ is what the simulation alone can offer: a least-squares fit of that same distribution to the sampled occupations. Reporting both side by side is the point — one is the answer, the other is the measurement, and only their agreement is evidence.
+
+Two limits bracket the fermion case, and both are on the sweep:
+
+$$
+\mu \approx T_F\left[1 - \frac{\pi^2}{12}\left(\frac{T}{T_F}\right)^2\right] \quad (T \ll T_F), \qquad
+\mu \approx T\log\!\left(\frac{n\lambda^3}{g}\right) \quad (T \gg T_F)
+$$
+
+The first is the Sommerfeld expansion: at low temperature $\mu$ sits at the Fermi energy and drops quadratically. The second is the classical limit, where $\mu$ goes *negative* and grows logarithmically — the gas has forgotten it is quantum. The crossover is at $T \sim T_F$, and the sweep spans it.
+
+### Reading the live view
+
+At **low temperature** ($T \ll T_F$) the fermion occupations are a step: one per orbital below $\mu$, zero above, with a rounding of width $\sim T$. Almost every proposed move is blocked, because almost every target is occupied, so the sampler is slow and the error bars are wide.
+
+At **high temperature** the step washes out into an exponential tail and fermions, bosons and classical particles become indistinguishable — $\bar n \ll 1$ everywhere, so two particles rarely want the same orbital and the statistics never gets consulted.
+
+Switch to **bosons** at low temperature and the lowest orbital starts collecting a macroscopic share of the particles. The occupation axis has no ceiling of $1$ any more, which is the entire visual difference between the two statistics.
+
+### The honest caveats
+
+The box is finite, so the orbital spectrum is discrete and $T_F$ is computed for exactly the orbitals present rather than from a continuum density of states.
+
+The runs here are deliberately short — a few thousand samples — so the error bars are real and visible rather than decorative. Consecutive samples are correlated, so the true uncertainty is somewhat larger than the plotted one, which assumes independence.
+
+And there is no condensate transition in the strict sense: Bose–Einstein condensation is a thermodynamic-limit statement, and a hundred particles in a box will show you the ground orbital filling up smoothly rather than a sharp transition at a critical temperature.

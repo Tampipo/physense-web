@@ -1,0 +1,62 @@
+## Le modèle d'Ising
+
+Placez un spin sur chaque site d'un réseau carré, laissez-le valoir $+1$ ou $-1$, et faites que les voisins préfèrent s'accorder :
+
+$$
+E = -J \sum_{\langle ij \rangle} s_i s_j
+$$
+
+C'est tout le modèle. Il n'a pas de forme close pour l'aimantation d'un réseau fini, et sa fonction de partition est une somme sur $2^{L^2}$ configurations — pour le réseau $48 \times 48$ ci-dessous, $2^{2304}$ termes, ce qui n'est pas tant un grand nombre qu'un nombre dénué de sens physique. La sommation est terminée. À partir d'ici, on échantillonne.
+
+### Pourquoi l'échantillonnage est légitime
+
+Metropolis–Hastings ne calcule pas $Z$ et n'en a pas besoin. Il construit une marche aléatoire dans l'espace des configurations dont la distribution *stationnaire* est celle de Boltzmann, en proposant un déplacement et en l'acceptant avec la probabilité
+
+$$
+\min\left(1, e^{-\Delta E / T}\right)
+$$
+
+Chaque grandeur des modules précédents était une somme exacte pondérée par $e^{-E/T}$ ; chaque grandeur ici est une moyenne sur des configurations qui *apparaissent* avec la fréquence $e^{-E/T}$. Le même poids, déplacé de l'arithmétique vers l'échantillonnage.
+
+Le prix à payer : deux configurations consécutives ne diffèrent que d'un spin, donc elles sont corrélées, et une moyenne sur $n$ échantillons en vaut moins de $n$ indépendants. C'est pourquoi les tracés ci-dessous mettent du temps à se stabiliser, et pourquoi la première chose à surveiller est justement s'ils se stabilisent.
+
+<IsingLattice
+  caption={
+    <>
+      Le bleu vaut <Tex>{`+1`}</Tex>, l'orange <Tex>{`-1`}</Tex>. Placez{" "}
+      <Tex>{`T`}</Tex> bien sous <Tex>{`T_c`}</Tex> et une couleur prend le
+      réseau ; bien au-dessus, aucune ne tient. À <Tex>{`T_c`}</Tex> même,
+      cherchez des domaines de toutes les tailles à la fois.
+    </>
+  }
+/>
+
+### Le seul nombre que nous connaissons exactement
+
+Onsager a résolu le réseau carré infini en 1944, et la température à laquelle il s'ordonne vaut
+
+$$
+T_c = \frac{2J}{\ln\left(1 + \sqrt{2}\right)} \approx 2{,}269185\, J
+$$
+
+C'est ce qui rend le modèle d'Ising digne d'être échantillonné, et pas seulement commode. **L'échantillonneur a quelque chose sur quoi avoir raison.** Descendez la température sous $2{,}269$ et $|m|$ doit s'écarter de zéro ; montez au-dessus et $|m|$ doit s'y effondrer. Aucun de ces comportements n'a été mis dans le code — l'échantillonneur ne voit jamais que le $\Delta E$ d'un retournement isolé.
+
+Trois régimes, et l'affichage indique dans lequel vous êtes :
+
+- **$T \ll T_c$** — un seul domaine l'emporte. L'énergie par site tend vers $-2J$, toutes les liaisons satisfaites. Retourner un spin à l'intérieur d'un domaine coûte $8J$, donc presque rien n'est accepté et le taux d'acceptation s'effondre.
+- **$T \gg T_c$** — le bruit thermique bat le couplage. $|m| \to 0$, l'énergie par site tend vers $0$, et presque toute proposition est acceptée puisque $\Delta E$ ne pèse plus.
+- **$T \approx T_c$** — des domaines de toutes les échelles, du site unique au réseau entier, et ils ne cessent de se réorganiser.
+
+### Les réseaux finis mentent, un peu
+
+Le $T_c$ d'Onsager est la réponse du réseau infini, et $48 \times 48$ n'est pas infini. Deux conséquences qu'il vaut mieux attendre que subir.
+
+La transition est **étalée**. Une vraie transition de phase exige la limite thermodynamique ; sur un réseau fini, toute grandeur est une fonction analytique de $T$, donc $|m|$ ne s'annule pas brutalement en $T_c$ mais décroît sur une fenêtre qui se resserre quand $L$ grandit. Comparez $L = 16$ et $L = 128$ et regardez la transition s'affûter.
+
+Sous $T_c$, on trace $|m|$ plutôt que $m$ parce que sur un réseau fini le système entier peut se retourner, et finira par le faire. Avec assez de temps, $\langle m \rangle = 0$ à *toute* température, par symétrie — les deux fondamentaux sont images l'un de l'autre et rien n'en préfère un. « Ordonné » signifie en réalité que le temps de retournement croît exponentiellement avec $L$, si bien que le réseau reste coincé dans l'un d'eux pour toute durée observable.
+
+Et près de $T_c$, l'échantillonneur ralentit. Les régions corrélées atteignent la taille du réseau, les retournements de spins isolés mettent une éternité à les réorganiser, et les barres d'erreur y sont bien pires que le nombre d'échantillons ne le laisse croire. C'est le ralentissement critique, et c'est la raison d'être des algorithmes d'amas.
+
+### Ce qui a été repris tel quel
+
+La règle d'acceptation utilisée ici est l'expression même que les modules exacts employaient comme poids, et l'objet ensemble est littéralement le même : une température, plus la liste des variables extensives libres. Ajouter un champ magnétique à ce réseau ne demanderait pas un nouvel échantillonneur, seulement un champ dans l'ensemble — l'acceptation sait déjà en lire un.
